@@ -73,6 +73,8 @@ import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-sh
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
 
+declare let window: any;
+
 @Component({
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',

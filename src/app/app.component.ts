@@ -160,7 +160,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
 
-    if (cordova.plugins.notification.local.launchDetails.action = 'click') {
+    if (cordova.plugins.notification && cordova.plugins.notification.local &&
+      cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url)
@@ -168,7 +169,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     
     this.notificationSrc.setupLocalNotification();
-
     this.triggerSignInEvent();
   }
 

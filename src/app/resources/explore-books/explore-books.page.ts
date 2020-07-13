@@ -3,8 +3,8 @@ import {
   Inject, NgZone, OnDestroy, QueryList,
   ViewChild, ViewChildren, OnInit
 } from '@angular/core';
-import { Platform, ModalController } from '@ionic/angular';
-import { AudienceFilter, ContentType, MimeType, Search, ExploreConstants, RouterLinks } from 'app/app.constant';
+import { Platform, ModalController, Events } from '@ionic/angular';
+import { AudienceFilter, ContentType, MimeType, Search, ExploreConstants, RouterLinks,ContentFilterConfig } from 'app/app.constant';
 import { Map } from 'app/telemetryutil';
 import {
   Environment,
@@ -24,7 +24,7 @@ import {
   ProfileType,
   SearchType
 } from 'sunbird-sdk';
-import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService, FormAndFrameworkUtilService } from '@app/services';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -116,6 +116,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   selectedGrade: string;
   selectedMedium: string;
   selectedContentType = 'all';
+  coachTimeout: any;
 
   searchForm: FormGroup = new FormGroup({
     grade: new FormControl([]),
@@ -142,16 +143,18 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private events:Events,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
       this.selectedGrade = extras.selectedGrade;
       this.selectedMedium = extras.selectedMedium;
-      this.categoryGradeLevels = extras.categoryGradeLevels;
-      this.subjects = extras.subjects;
+      this.categoryGradeLevels = [];
+      this.subjects = [];
       this.subjects.unshift({ name: this.commonUtilService.translateMessage('ALL'), selected: true });
-      this.contentType = extras.contentType;
+      this.contentType = ContentType.FOR_LIBRARY_TAB;
 
       this.corRelationList = [{
         id: this.selectedGrade,
@@ -181,6 +184,15 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
   }
 
+  
+
+  ionViewDidEnter() {
+    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
+    this.coachTimeout = setTimeout(() => {
+      this.appGlobalService.showCouchMarkScreen();
+    }, 2000);
+  }
+
   ionViewWillEnter() {
 
     this.searchFormSubscription = this.onSearchFormChange()
@@ -190,13 +202,69 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       grade: this.selectedGrade,
       medium: this.selectedMedium
     });
+    // this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+    //   this.handleHeaderEvents(eventName);
+    // });
+    // this.handleBackButton();
+    // this.headerService.showHeaderWithBackButton();
+    this.events.subscribe('update_header', () => {
+      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+    });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.handleBackButton();
-    this.headerService.showHeaderWithBackButton();
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+
     window.addEventListener('keyboardDidHide', this.showSortByButton);
     window.addEventListener('keyboardWillShow', this.hideSortByButton);
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'search':
+        this.search();
+        break;
+      case 'download':
+        this.redirectToActivedownloads();
+        break;
+      case 'notification':
+        this.redirectToNotifications();
+        break;
+      default: console.warn('Use Proper Event name');
+    }
+  }
+
+  async search() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.SEARCH_BUTTON_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY);
+    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+      ContentFilterConfig.NAME_LIBRARY);
+    this.router.navigate([RouterLinks.SEARCH], {
+      state: {
+        contentType: contentTypes,
+        source: PageId.LIBRARY
+      }
+    });
+  }
+
+  redirectToActivedownloads() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY);
+    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+  }
+
+  redirectToNotifications() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.NOTIFICATION_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
   ngOnDestroy(): void {
@@ -218,13 +286,13 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     });
   }
 
-  handleHeaderEvents($event) {
-    if ($event.name === 'back') {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(
-        PageId.EXPLORE_MORE_CONTENT, Environment.HOME, true);
-      this.location.back();
-    }
-  }
+  // handleHeaderEvents($event) {
+  //   if ($event.name === 'back') {
+  //     this.telemetryGeneratorService.generateBackClickedTelemetry(
+  //       PageId.EXPLORE_MORE_CONTENT, Environment.HOME, true);
+  //     this.location.back();
+  //   }
+  // }
 
   checkUserSession() {
     const isGuestUser = !this.appGlobalService.isUserLoggedIn();
@@ -295,6 +363,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       tap((result?: ContentSearchResult) => {
         this.zone.run(() => {
           if (result) {
+            this.contentSearchResult = result.contentDataList || [];
             let facetFilters: Array<ContentSearchFilter>;
             this.showLoader = false;
             facetFilters = result.filterCriteria.facetFilters;
@@ -307,7 +376,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
             const subjects = result.filterCriteria.facetFilters.find((f) => f.name === 'subject').values;
             subjects.sort((a, b) => b.count - a.count);
             this.subjects = this.union(this.subjects, subjects);
-            this.contentSearchResult = result.contentDataList || [];
             value['searchResult'] = this.contentSearchResult.length;
           }
         });
@@ -374,6 +442,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }
     window.removeEventListener('keyboardDidHide', this.showSortByButton);
     window.removeEventListener('keyboardWillShow', this.hideSortByButton);
+    this.coachTimeout.clearTimeout();
+
   }
 
   async openSortOptionsModal() {

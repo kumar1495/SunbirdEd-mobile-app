@@ -19,7 +19,9 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../resources/resources.module#ResourcesModule'
+            // loadChildren: '../resources/resources.module#ResourcesModule',
+            loadChildren: '../resources/explore-books/explore-books.module#ExploreBooksPageModule'
+
           }
         ]
       },

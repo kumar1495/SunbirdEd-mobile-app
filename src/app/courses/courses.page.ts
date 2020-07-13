@@ -276,8 +276,10 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.getEnrolledCourses(false, true);
     });
 
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
-      this.showSignInCard = false;
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD,  () => {
+      this.ngZone.run(() => {
+        this.showSignInCard = false;
+      })
     });
   }
 

@@ -158,14 +158,15 @@ export class TermsAndConditionsPage implements OnInit {
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
-              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                state: {
-                  hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
-                  showOnlyMandatoryFields: true,
-                  profile: value['profile'],
-                  isRootPage: true
-                }
-              });
+
+              // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+              //   state: {
+              //     hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
+              //     showOnlyMandatoryFields: true,
+              //     profile: value['profile'],
+              //     isRootPage: true
+              //   }
+              // });
             }
             console.log("inside can load");
           }).catch(async e => {

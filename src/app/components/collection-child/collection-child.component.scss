@@ -96,11 +96,11 @@
     }
     .sb-bold-blue{
         font-weight: bolder;
-        color:#024f9d;
+        color:#832215;
         padding: 8px;
     }
     .sb-blue-text{
-        color:#024f9d;
+        color:#832215;
     }
     .sb-highlighted-row{
         @include padding($base-block-space * 1);
@@ -110,7 +110,7 @@
     .sb-textbook-toc{
         @include padding($base-block-space * 1);
         display: flex;
-        color:#024f9d;
+        color:#832215;
         @include clearfix;
     }
 }
@@ -121,10 +121,10 @@
 
 .content-playbutton {
     padding-left: 4px;
-    color: #024f9d;
+    color: #832215;
 }
 .play-button{
-    --border-color: #024f9d;
+    --border-color: #832215;
     --border-width: 1px;
     text-transform: none;
     height: 3em;

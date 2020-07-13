@@ -1,8 +1,8 @@
 /* to be removed*/
 
 $colors: (
-  primary:         #006DE5, //#488aff
-  secondary:       #32db64,
+  primary:         #832215, //#488aff
+  secondary:       #58BA47,
   danger:          #f53d3d,
   light:           #f4f4f4,
   dark:            #222,
@@ -45,8 +45,8 @@ $colors: (
   red:             #D50000,
   light_red:       #FA8F9C,
 
-  thick_blue:      #006DE5,
-  primary_blue:    #007AFF,
+  thick_blue:      #832215,
+  primary_blue:    #832215,
   fade_blue:       #F2F8FF,
   broadcast_greeting_navbar : #0b75fa,
   textGrey:#666666,
@@ -127,7 +127,7 @@ $gray-300:     #999999; // sub heading 2
 $gray-400:     #666666; // sub heading
 $gray-800:     #333333; // text color
 // Base Colors
-$blue:    #024f9d;
+$blue:    #832215;
 $green:   #008840;
 $orange:  #e55a28;
 $red:     #DB4437;
@@ -139,11 +139,12 @@ $yellow:  #ffc107;
 $teal:    #20c997;
 $cyan:    #17a2b8;
 $black:   #000000;
+$brown:   #832215;
 //breadcrumb Colors
 $light-grey: #f2f2f2;
 $light-blue: #EDF4F9;
 // brand Colors
-$primary-color:   $blue;
+$primary-color:   $brown;
 $secondary-color: $green;
 $tertiary-color:  $orange;
 // Status Colors
@@ -237,9 +238,9 @@ $text-lightDark: #666;
 $text-gray: rgb(180, 171, 171);
 $signup-btn-bg-not-active-color: #9b9b9b;
 $signup-thankyou-text-color: #4a4a4a;
-$signup-btn-bg-active-color: #2ca58d;
+$signup-btn-bg-active-color: #832215;
 $form-input-border-color: #979797;
-$form-input-border-active-color: #4a90e2;
+$form-input-border-active-color: #832215;
 $menuitem-color: #212121;
 $primary-border: 0.5px solid rgba(216, 216, 216, 0.5);
 $primary-background: rgba(216, 216, 216, 0.5);

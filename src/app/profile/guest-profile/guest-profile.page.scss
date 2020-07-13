@@ -1,6 +1,7 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+@import "../../../assets/styles/variables";
 
 :host {
   .profile-name {
@@ -26,7 +27,7 @@
   }
 
   .change-role {
-    color: dodgerblue;
+    color: $primary-color ;
     text-align: center;
     @include margin(null, 10px, null, null);
     font-size: 0.9rem;

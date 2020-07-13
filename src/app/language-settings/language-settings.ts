@@ -10,7 +10,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import { Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -36,7 +36,7 @@ export class LanguageSettingsPage implements OnInit {
   defaultDeviceLang = '';
   previousLanguage: any;
   selectedLanguage: any = {};
-  btnColor = '#8FC4FF';
+  btnColor = '#832215';
   unregisterBackButton: Subscription;
   headerConfig: any;
   headerObservable: any;
@@ -148,11 +148,11 @@ export class LanguageSettingsPage implements OnInit {
     if (this.language) {
       this.zone.run(() => {
         this.translateService.use(this.language);
-        this.btnColor = '#006DE5';
+        this.btnColor = '#832215';
         this.isLanguageSelected = true;
       });
     } else {
-      this.btnColor = '#8FC4FF';
+      this.btnColor = '#832215';
     }
   }
 
@@ -208,17 +208,17 @@ export class LanguageSettingsPage implements OnInit {
       }
     } else {
       this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.DISABLED,
-          '',
-          Environment.ONBOARDING,
-          PageId.ONBOARDING_LANGUAGE_SETTING,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          ID.CONTINUE_CLICKED
+        InteractType.DISABLED,
+        '',
+        Environment.ONBOARDING,
+        PageId.ONBOARDING_LANGUAGE_SETTING,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ID.CONTINUE_CLICKED
       );
-      this.btnColor = '#8FC4FF';
+      // this.btnColor = '#8FC4FF';
 
       const parser = new DOMParser();
       const translatedString = this.commonUtilService.translateMessage('PLEASE_SELECT_A_LANGUAGE');

@@ -80,9 +80,10 @@ export class LogoutHandlerService {
     if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
-    } else {
+    } 
+    else {
       const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+      // this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     }
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
