@@ -147,7 +147,11 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private events:Events,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
-    const extras = this.router.getCurrentNavigation().extras.state;
+    // const extras = this.router.getCurrentNavigation().extras.state;
+    let extras;
+    if(this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state){
+      extras = this.router.getCurrentNavigation().extras.state
+    }
     if (extras) {
       this.selectedGrade = extras.selectedGrade;
       this.selectedMedium = extras.selectedMedium;
