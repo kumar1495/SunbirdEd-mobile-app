@@ -46,3 +46,4 @@ google-services.json
 #sonarcloud
 .scannerwork
 /buildConfig/bodh-release-key.keystore
+/buildConfig/abhyasa-release-key.keystore

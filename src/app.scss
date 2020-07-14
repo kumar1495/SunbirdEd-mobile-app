@@ -21,7 +21,7 @@
 :root {
   --ion-default-font: "NotoSans";
   --ion-font-family: "NotoSans";
-  --ion-color-primary: #832215;
+  --ion-color-primary: #168e64;
 }
 
 html,
@@ -190,10 +190,10 @@ ul.rating .ion-md-star-outline:before {
   padding-right: 10px;
 }
 .popover-ratings ion-icon.filled {
-  color: #832215 !important;
+  color: #168e64 !important;
 }
 .small-rating ion-icon.filled {
-  color: #832215 !important;
+  color: #168e64 !important;
 }
 
 .select-box {
@@ -1100,7 +1100,7 @@ ion-split-pane {
 }
 
 sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
-    color: #832215;
+    color: #168e64;
 }
 
 sb-course-cards-hlist > .layout-course > .header{
