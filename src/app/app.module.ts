@@ -2,7 +2,7 @@
 import { NgModule, Provider, ErrorHandler, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // ionic cordova dependencies/plugins
@@ -15,6 +15,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { Network } from '@ionic-native/network/ngx';
+import { IonicStorageModule } from '@ionic/storage';
 
 // 3rd party dependencies
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
@@ -42,7 +43,8 @@ import {
   ActivePageService,
   FormAndFrameworkUtilService,
   CanvasPlayerService,
-  SplashScreenService
+  SplashScreenService,
+  ApiInterceptor
 } from '../services/index';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -406,6 +408,7 @@ declare const sbutility;
     AppRoutingModule,
     ComponentsModule,
     HttpClientModule,
+    IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -468,7 +471,8 @@ declare const sbutility;
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
+    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
   schemas: [

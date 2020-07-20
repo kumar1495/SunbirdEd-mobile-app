@@ -7,6 +7,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ProfileConstants, EventTopics } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId } from '@app/services';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-tabs',
@@ -37,6 +38,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
+    private storage: Storage
   ) {
 
   }
@@ -44,6 +46,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
+    this.storage.set('token', session.access_token);
     if (!session) {
       const profileType = this.appGlobalService.guestProfileType;
       if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
