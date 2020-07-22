@@ -481,7 +481,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       ContentFilterConfig.NAME_COURSE);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType,
+        contentType : ContentType.FOR_COURSE_TAB,
         source: PageId.COURSES,
         enrolledCourses: this.enrolledCourses,
         guestUser: this.guestUser,

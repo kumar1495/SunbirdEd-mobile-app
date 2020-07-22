@@ -40,8 +40,10 @@ import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
-import { Subscription, Observable, from } from 'rxjs';
-import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
+import { Subscription, Observable, from, Subject } from 'rxjs';
+import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AppConfig } from '../../config/appConfig';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 declare const cordova;
 @Component({
@@ -101,6 +103,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isProfileUpdated: boolean;
   isQrCodeLinkToContent: any;
   LibraryCardTypes = LibraryCardTypes;
+  autoCompleteOptions: Array<Object>;
+  searchFieldUpdate = new Subject<string>();
+  didYouMean: string;
+
 
   @ViewChild('contentView') contentView: IonContent;
   constructor(
@@ -128,7 +134,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private popoverCtrl: PopoverController,
     private location: Location,
     private router: Router,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private http: HttpClient
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -150,6 +157,18 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.getFrameworkId();
     this.selectedLanguageCode = this.translate.currentLang;
+
+    // Debounce search.
+    this.searchFieldUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        if (this.searchKeywords && this.searchKeywords.length) {
+          this.getAutoComplete();
+        } else {
+          this.autoCompleteOptions = [];
+        }
+      });
   }
 
   ngOnInit(): void {
@@ -722,6 +741,157 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.searchContentResult = undefined;
     this.filterIcon = false;
     this.isEmptyResult = false;
+  }
+
+  appendToQuery(option) {
+    this.searchKeywords = option;
+    this.searchBar.setFocus();
+    this.getAutoComplete();
+  }
+
+  getAutoComplete() {
+    const index = this.contentType ? this.contentType.indexOf(ContentType.COURSE) : -1;
+    const isACourse = (this.source === 'library') ? false : true
+    const payload = {
+      request: {
+        filters: {
+          // channel: "0124487522476933120",
+          board: null,
+          contentType: this.contentType,
+          isACourse: isACourse
+        },
+        limit: 20,
+        query: this.searchKeywords,
+        sort_by: {},
+        softConstraints: {
+          badgeAssertions: 98,
+          board: 99
+        },
+        mode: "soft",
+        facets: Search.FACETS,
+        offset: 0
+      }
+    }
+
+    if (this.profile && this.profile.board && this.profile.board.length) {
+      payload.request.filters.board
+      // payload.request.filters.board = this.applyProfileFilter(this.profile.board, payload.request.filters.board, 'board');
+      payload.request.filters.board = this.profile.board;
+    }
+
+    const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.kendraUrl + AppConfig.apiConstants.searchAutoComplete;
+    this.http.post(url, payload).subscribe(data => {
+      debugger
+      this.autoCompleteOptions = data['result'].suggestions;
+    }, error => {
+      this.autoCompleteOptions = [];
+    })
+    //   }
+    // )
+
+  }
+
+  searchHandler(skipAutocorrect?: number) {
+    this.autoCompleteOptions = [];
+
+    this.scrollToTop();
+    if (this.searchKeywords.length < 3) {
+      return;
+    }
+
+    this.addSearchHistoryEntry();
+
+    this.showLoader = true;
+
+    (window as any).cordova.plugins.Keyboard.close();
+    
+    const contentSearchRequest = {
+      searchType: SearchType.SEARCH,
+      query: this.searchKeywords,
+      contentTypes: this.contentType,
+      facets: Search.FACETS,
+      audience: this.audienceFilter,
+      mode: 'soft',
+      framework: this.currentFrameworkId,
+      languageCode: this.selectedLanguageCode,
+      limit: 100,
+      offset: 0,
+      exists: [],
+      filters: {
+        compatibilityLevel: {
+          min: 1,
+          max: 4
+        },
+        objectType: [
+          "Content"
+        ],
+        contentType: this.contentType,
+        medium: [],
+        board: [],
+        language: [],
+        topic: [],
+        purpose: [],
+        channel: [],
+        mimeType: [],
+        subject: []
+      }
+
+    };
+
+    this.isDialCodeSearch = false;
+
+    this.dialCodeContentResult = undefined;
+    this.dialCodeResult = undefined;
+    this.corRelationList = [];
+    const payload = {
+      url: AppConfig.environment + AppConfig.apiConstants.bodhSearch,
+      headers: {
+        "X-Channel-Id": "0124487522476933120",
+        "ts": new Date(),
+        // "X-Org-code": "0124487522476933120",
+        "X-App-Id": "production.production.mobile",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Source": "mobile"
+      },
+      body: {
+        request: { ...contentSearchRequest }
+      }
+    }
+
+    const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.kendraUrl + AppConfig.apiConstants.search + '?skipAutoCorrect=' + (skipAutocorrect ? skipAutocorrect : 0);
+    this.didYouMean = "";
+    this.http.post(url, payload).subscribe((response: any) => {
+      this.responseData = response;
+      if (response.status === 200 && response.result) {
+        this.addCorRelation(response.result.data.params.resmsgid, 'API');
+        debugger
+        // const filteredData = this.slUtils.filterOutEkStepContent(response.result.contentDataList);
+        this.searchContentResult = response.result.data.result.content;
+        this.didYouMean = response.result.did_you_mean;
+
+
+        this.isEmptyResult = !this.searchContentResult || this.searchContentResult.length === 0;
+
+        this.updateFilterIcon();
+
+        this.generateLogEvent(response);
+        const values = new Map();
+        values.from = this.source;
+        values.searchCount = this.searchContentResult ? this.searchContentResult.length : 0;
+        values.searchCriteria = response.request;
+        this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
+      } else {
+        this.isEmptyResult = true;
+      }
+      this.showEmptyMessage = (!this.searchContentResult || this.searchContentResult.length === 0) ? true : false;
+      this.showLoader = false;
+    }, error => {
+      this.showLoader = false;
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+      }
+    })
   }
 
   handleSearch() {

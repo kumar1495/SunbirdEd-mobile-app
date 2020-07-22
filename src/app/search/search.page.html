@@ -1,16 +1,16 @@
 <ion-header>
   <ion-toolbar>
     <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
-      class="search-input" (keyup.enter)="handleSearch()"
-      (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
-      [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_PLACEHOLDER' | translate"></ion-input>
+      class="search-input" (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false;searchFieldUpdate.next($event)"
+      [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_PLACEHOLDER' | translate" (keyup.enter)="searchHandler()">
+    </ion-input>
     <ion-buttons slot="start">
       <ion-button icon-only (click)="goBack()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons class="search-buttons-group" slot="primary" *ngIf="!dialCode">
-      <ion-button icon-only (click)="handleSearch()" *ngIf="searchKeywords && !filterIcon">
+      <ion-button icon-only (click)="searchHandler()" *ngIf="searchKeywords && !filterIcon">
         <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_search.svg" alt="search">
       </ion-button>
       <ion-button icon-only (click)="handleCancel()" *ngIf="filterIcon">
@@ -46,7 +46,7 @@
             <div class="col-auto invisible">
               <img src="assets/imgs/icon_recent.svg" alt="recent">
             </div>
-            <div class="col" (click)="handleSearch()">
+            <div class="col" (click)="searchHandler()">
               {{'SEE_ALL_RESULTS_FOR' | translate: {'%s': searchKeywords} }}
             </div>
             <div class="col-auto">
@@ -54,6 +54,18 @@
             </div>
           </div>
         </ng-container>
+
+        <div>
+          <ion-list no-lines text-wrap *ngFor="let option of autoCompleteOptions;" style="margin: 0">
+            <ion-item text-wrap style="padding-left: 8px;">
+              <ion-icon name="search" item-start style="color: #ddd;"></ion-icon>
+              <div (click)="searchKeywords = option;searchHandler(1)">{{ option }}</div>
+              <ion-icon name="arrow-round-up" item-end style="margin-left: 5px;" (click)="appendToQuery(option)">
+              </ion-icon>
+            </ion-item>
+            <div *ngIf="!last" class="divider" style="margin: 0 "></div>
+          </ion-list>
+        </div>
 
         <ng-container *ngIf="searchHistory.length">
           <div (click)="onSearchHistoryTap(searchEntry)" *ngFor="let searchEntry of searchHistory"
@@ -192,10 +204,13 @@
     </div>
   </div>
 
-  <div *ngIf="searchContentResult && searchContentResult.length">
+  <div *ngIf="searchContentResult && searchContentResult.length && !autoCompleteOptions?.length">
     <div class="sb-search-history-entry sb-search-header-meta row">
       <div class="col">
-        {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
+        <div *ngIf="didYouMean" class="didYouMean">Showing result for <i>"{{didYouMean}}"</i></div>
+        <div *ngIf="!didYouMean">
+          {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
+        </div>
       </div>
     </div>
     <div class="sb-card-container sb-card-textbook-container">
@@ -204,7 +219,8 @@
         (click)="openContent(undefined, content,i)" [content]="content" [layoutName]="layoutName"></app-text-book-card>
     </div>
   </div>
-  <div class="empty-search-result ion-text-center" *ngIf="!showLoader && showEmptyMessage" padding-top>
+  <div class="empty-search-result ion-text-center"
+    *ngIf="!showLoader && showEmptyMessage && !autoCompleteOptions?.length" padding-top>
     {{ 'EMPTY_SEARCH_RESULTS' | translate }}
   </div>
 </ion-content>

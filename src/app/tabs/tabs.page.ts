@@ -46,7 +46,6 @@ export class TabsPage implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
-    this.storage.set('token', session.access_token);
     if (!session) {
       const profileType = this.appGlobalService.guestProfileType;
       if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
@@ -55,6 +54,7 @@ export class TabsPage implements OnInit, AfterViewInit {
         initTabs(this.container, GUEST_STUDENT_TABS);
       }
     } else {
+      this.storage.set('token', session.access_token);
       if ((await this.preferences.getString('SHOW_WELCOME_TOAST').toPromise()) === 'true') {
         this.preferences.putString('SHOW_WELCOME_TOAST', 'false').toPromise().then();
 

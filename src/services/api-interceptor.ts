@@ -16,8 +16,8 @@ export class ApiInterceptor implements HttpInterceptor {
     }
 
     async handle(req: HttpRequest<any>, next: HttpHandler) {
-        if (req.url.includes('kendra')) {
-            const token = await this.storage.get('token');
+        const token = await this.storage.get('token');
+        if (req.url.includes('kendra') && token) {
             console.log(token);
             req = req.clone({
                 setHeaders: {

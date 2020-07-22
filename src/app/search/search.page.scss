@@ -398,3 +398,11 @@
   margin: 0;
   @include padding(8px, null, null, 8px !important);
 }
+
+.didYouMean {
+  i{
+    font-weight: 600;
+    color: #832215;
+    font-size: 16px;
+  }
+}
