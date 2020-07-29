@@ -36,7 +36,7 @@ export class LanguageSettingsPage implements OnInit {
   defaultDeviceLang = '';
   previousLanguage: any;
   selectedLanguage: any = {};
-  btnColor = '#832215';
+  btnColor = '#168e64';
   unregisterBackButton: Subscription;
   headerConfig: any;
   headerObservable: any;
@@ -148,11 +148,11 @@ export class LanguageSettingsPage implements OnInit {
     if (this.language) {
       this.zone.run(() => {
         this.translateService.use(this.language);
-        this.btnColor = '#832215';
+        this.btnColor = '#168e64';
         this.isLanguageSelected = true;
       });
     } else {
-      this.btnColor = '#832215';
+      this.btnColor = '#168e64';
     }
   }
 
