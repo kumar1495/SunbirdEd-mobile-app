@@ -31,6 +31,7 @@ import {
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -60,7 +61,8 @@ export class SignInCardComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    private router: Router
+    private router: Router,
+    private storage: Storage
   ) {
 
     this.appVersion.getAppName()
@@ -168,6 +170,7 @@ export class SignInCardComponent implements OnInit {
     return new Promise<any>((resolve, reject) => {
       that.authService.getSession().toPromise()
         .then((session: OAuthSession) => {
+          this.storage.set('token',session['access_token']);
           if (session) {
             const req: ServerProfileDetailsRequest = {
               userId: session.userToken,

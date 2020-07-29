@@ -130,7 +130,7 @@
   "CONTRIBUTORS": "Contributor(s)",
   "COPYRIGHT": "Copyright",
   "COURSES_BNAV": "Courses",
-  "COURSES_IN_PROGRESS": "My Trainings",
+  "COURSES_IN_PROGRESS": "My Courses",
   "COURSE_COMPLETED_LABEL": "{{%s}}% completed",
   "COURSE_ENDED": "Training ended on {{%s}}",
   "COURSE_ENROLLED": "You have joined the course",

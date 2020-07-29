@@ -15,6 +15,8 @@ import { ContainerService } from '../container.services';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { Observable } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
+import { Storage } from '@ionic/storage';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +30,8 @@ export class LogoutHandlerService {
     private appGlobalService: AppGlobalService,
     private containerService: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router
+    private router: Router,
+    private storage: Storage
   ) {
   }
 
@@ -55,6 +58,7 @@ export class LogoutHandlerService {
         return this.authService.resignSession();
       }),
       tap(async () => {
+        this.storage.remove('token');
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.appGlobalService.setEnrolledCourseList([]);
@@ -77,14 +81,16 @@ export class LogoutHandlerService {
 
     const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
       true : false;
-    if (isOnboardingCompleted) {
-      const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+    // if (isOnboardingCompleted) {
+    //   const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+    //   this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+    // } 
+    // else {
+    //   const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
+    //   // this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+    // }
+    const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
-    } 
-    else {
-      const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
-      // this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
-    }
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
   }

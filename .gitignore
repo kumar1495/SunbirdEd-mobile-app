@@ -47,3 +47,4 @@ google-services.json
 .scannerwork
 /buildConfig/bodh-release-key.keystore
 /buildConfig/abhyasa-release-key.keystore
+/src/config/appConfig.ts

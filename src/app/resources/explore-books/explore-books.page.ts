@@ -147,7 +147,11 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private events:Events,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
-    const extras = this.router.getCurrentNavigation().extras.state;
+    // const extras = this.router.getCurrentNavigation().extras.state;
+    let extras;
+    if(this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state){
+      extras = this.router.getCurrentNavigation().extras.state
+    }
     if (extras) {
       this.selectedGrade = extras.selectedGrade;
       this.selectedMedium = extras.selectedMedium;
@@ -243,7 +247,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       ContentFilterConfig.NAME_LIBRARY);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType: contentTypes,
+        contentType: ContentType.FOR_LIBRARY_TAB,
         source: PageId.LIBRARY
       }
     });
@@ -326,7 +330,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           ...this.searchForm.getRawValue(),
           query: this.searchInputRef.nativeElement['value'],
           searchType: SearchType.SEARCH,
-          contentTypes: this.selectedContentType === ContentType.TEXTBOOK ? [ContentType.TEXTBOOK] : this.contentType,
+          contentTypes: ContentType.FOR_LIBRARY_TAB,
           facets: Search.FACETS,
           audience: this.audienceFilter,
           mode: 'soft',
@@ -495,7 +499,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   onMimeTypeClicked(mimeType, index) {
-
     this.mimeTypes.forEach((value) => {
       value.selected = false;
     });
@@ -503,7 +506,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     this.mimeTypes[index].selected = true;
 
     const idx = this.mimeTypes.findIndex((value) => value.name === 'TEXTBOOK');
-
     this.generateMimeTypeClickedTelemetry(mimeType.name);
 
     if (idx === index) {
@@ -511,6 +513,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     } else {
       this.selectedContentType = 'all';
     }
+    this.searchFormSubscription = this.onSearchFormChange()
+    .subscribe(() => { });
 
   }
 

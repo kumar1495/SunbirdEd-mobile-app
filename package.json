@@ -44,6 +44,7 @@
     "@ionic-native/social-sharing": "^5.15.1",
     "@ionic-native/status-bar": "^5.15.1",
     "@ionic/angular": "^4.11.2",
+    "@ionic/storage": "^2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@project-sunbird/common-consumption": "^2.9.6",
@@ -84,6 +85,7 @@
     "cordova-plugin-whitelist": "^1.3.4",
     "cordova-plugin-x-socialsharing": "^5.6.8",
     "cordova-plugin-zip": "^3.1.0",
+    "cordova-sqlite-storage": "^5.0.1",
     "cordova-zip-plugin": "git+https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "cordova.plugins.diagnostic": "^5.0.2",
     "core-js": "^2.6.10",
@@ -190,7 +192,8 @@
         "GOOGLE_SERVICES_VERSION": "4.2.0",
         "ANDROID_DEFAULT_NOTIFICATION_ICON": "@mipmap/ic_launcher"
       },
-      "sb-cordova-plugin-utility": {}
+      "sb-cordova-plugin-utility": {},
+      "cordova-sqlite-storage": {}
     },
     "platforms": [
       "android"
