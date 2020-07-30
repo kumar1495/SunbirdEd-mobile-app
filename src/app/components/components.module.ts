@@ -43,6 +43,7 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
 import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.component';
 import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-share-popup.component';
 import {ImportPopoverComponent} from './popups/import-popover/import-popover.component';
+import { ApFooterComponent } from './ap-footer/ap-footer.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     TeacherIdVerificationComponent,
     SbSharePopupComponent,
     SbAppSharePopupComponent,
-    ImportPopoverComponent
+    ImportPopoverComponent,
+    ApFooterComponent
   ],
   imports: [
     CommonModule,
@@ -114,7 +116,8 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     TeacherIdVerificationComponent,
     SbSharePopupComponent,
     SbAppSharePopupComponent,
-    ImportPopoverComponent
+    ImportPopoverComponent,
+    ApFooterComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -149,7 +152,8 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     TeacherIdVerificationComponent,
     SbSharePopupComponent,
     SbAppSharePopupComponent,
-    ImportPopoverComponent
+    ImportPopoverComponent,
+    ApFooterComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

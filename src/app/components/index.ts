@@ -6,3 +6,4 @@ export * from './sign-in-card/sign-in-card.component';
 export * from './collection-child/collection-child.component';
 export * from './rating-alert/rating-alert.component';
 export * from './content-rating-alert/content-rating-alert.component';
+export * from './ap-footer/ap-footer.component';

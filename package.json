@@ -61,7 +61,7 @@
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-awesome-shared-preferences": "git+https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git",
     "cordova-plugin-badge": "^0.8.8",
-    "cordova-plugin-code-push": "^1.12.5",
+    "cordova-plugin-code-push": "^1.13.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-2.9.0",
