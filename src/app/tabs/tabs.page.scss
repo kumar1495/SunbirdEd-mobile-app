@@ -24,59 +24,59 @@ ion-tabs {
     line-height: 20px;
   }
 
-  ion-tab-button:nth-child(3) {
-    filter: none;
-    border: none;
+  // ion-tab-button:nth-child(3) {
+  //   filter: none;
+  //   border: none;
 
-    position: relative;
+  //   position: relative;
     
-    height: calc(56px + (56px / 2));
+  //   height: calc(56px + (56px / 2));
 
-    &::before {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-40px);
-      width: 80px;
-      height: 56px;
-      background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 25px, rgba(0, 0, 0, 0.1) 35px);
-      z-index: 1;
-    }
+  //   &::before {
+  //     content: "";
+  //     position: absolute;
+  //     bottom: 0;
+  //     left: 50%;
+  //     transform: translateX(-40px);
+  //     width: 80px;
+  //     height: 56px;
+  //     background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 25px, rgba(0, 0, 0, 0.1) 35px);
+  //     z-index: 1;
+  //   }
 
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-40px);
-      width: 80px;
-      height: 56px;
-      background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 36px, rgba(255, 255, 255, 1) 35px);
-      z-index: 2;
-    }
+  //   &::after {
+  //     content: "";
+  //     position: absolute;
+  //     bottom: 0;
+  //     left: 50%;
+  //     transform: translateX(-40px);
+  //     width: 80px;
+  //     height: 56px;
+  //     background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 36px, rgba(255, 255, 255, 1) 35px);
+  //     z-index: 2;
+  //   }
 
-    ion-icon {
-      bottom: 10px;
-      position: relative;
-      background: $primary-color;
-      width: 56px;
-      height: 56px;
-      margin: 0px;
-      padding: 0px;
-      min-height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      color: $white;
+  //   ion-icon {
+  //     bottom: 10px;
+  //     position: relative;
+  //     background: $primary-color;
+  //     width: 56px;
+  //     height: 56px;
+  //     margin: 0px;
+  //     padding: 0px;
+  //     min-height: 56px;
+  //     display: flex;
+  //     align-items: center;
+  //     justify-content: center;
+  //     border-radius: 50%;
+  //     color: $white;
 
-      .icon-inner {
-        width: 56px;
-        height: 56px;
-      }
-    }
-  }
+  //     .icon-inner {
+  //       width: 56px;
+  //       height: 56px;
+  //     }
+  //   }
+  // }
 
   ion-icon {
     background-repeat: no-repeat;

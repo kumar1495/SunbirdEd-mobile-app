@@ -164,6 +164,7 @@
   "DISTRICT": "जिल्हा ",
   "DISTRICT_OPTION_TEXT": "जिल्हा निवडा ",
   "DOCS": "डॉक्युमेंट्स ",
+  "COLLECTION":"संग्रह",
   "DOWNLOAD": "डाउनलोड करा",
   "DOWNLOADING": "डाऊनलोड करीत आहे {{%s}} %",
   "DOWNLOADING_1": "{{%s}} डाउनलोड  चालू",

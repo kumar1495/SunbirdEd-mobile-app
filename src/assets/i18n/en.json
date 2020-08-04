@@ -169,6 +169,7 @@
   "DISTRICT": "District",
   "DISTRICT_OPTION_TEXT": "Select district",
   "DOCS": "Documents",
+  "COLLECTION":"Collection",
   "DOWNLOAD": "Download",
   "DOWNLOADING": "DOWNLOADING {{%s}} %",
   "DOWNLOADING_1": "Downloading {{%s}}",
