@@ -169,6 +169,7 @@
   "DISTRICT": "ज़िला",
   "DISTRICT_OPTION_TEXT": "ज़िला चुनिए",
   "DOCS": "आलेख",
+  "COLLECTION":"संग्रह",
   "DOWNLOAD": "डाउनलोड",
   "DOWNLOADING": "{{%s}}% डाउनलोड हो गया है",
   "DOWNLOADING_1": "डाउनलोड हो रहा है {{%s}}",

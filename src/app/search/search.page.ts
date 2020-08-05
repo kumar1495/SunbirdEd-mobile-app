@@ -779,9 +779,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       payload.request.filters.board = this.profile.board;
     }
 
-    const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.kendraUrl + AppConfig.apiConstants.searchAutoComplete;
+    const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.sunbird + AppConfig.apiConstants.searchAutoComplete;
     this.http.post(url, payload).subscribe(data => {
-      debugger
       this.autoCompleteOptions = data['result'].suggestions;
     }, error => {
       this.autoCompleteOptions = [];
@@ -859,7 +858,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.kendraUrl + AppConfig.apiConstants.search + '?skipAutoCorrect=' + (skipAutocorrect ? skipAutocorrect : 0);
+    const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.sunbird + AppConfig.apiConstants.search + '?skipAutoCorrect=' + (skipAutocorrect ? skipAutocorrect : 0);
     this.didYouMean = "";
     this.http.post(url, payload).subscribe((response: any) => {
       this.responseData = response;

@@ -168,6 +168,7 @@
   "DISTRICT": "જિલ્લો",
   "DISTRICT_OPTION_TEXT": "જિલ્લો પસંદ કરો",
   "DOCS": "ડોક્યુમેન્ટ્સ ",
+  "COLLECTION":"સંગ્રહ",
   "DOWNLOAD": "ડાઉનલોડ કરો",
   "DOWNLOADING": "{{%s}}% ડાઉનલોડ થયું",
   "DOWNLOADING_1": "{{%s}} ડાઉનલોડ કરી રહ્યું છે",

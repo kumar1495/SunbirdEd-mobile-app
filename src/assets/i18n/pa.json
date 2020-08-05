@@ -168,6 +168,7 @@
   "DISTRICT": "ਜ਼ਿਲ੍ਹਾ",
   "DISTRICT_OPTION_TEXT": "ਜ਼ਿਲ੍ਹਾ ਚੁਣੋ",
   "DOCS": "ਦਸਤਾਵੇਜ਼",
+  "COLLECTION":"ਸੰਗ੍ਰਹਿ",
   "DOWNLOAD": "ਡਾਉਨਲੋਡ",
   "DOWNLOADING": "{{%s}} % ਡਾਊਨਲੋਡ ਹੋ ਰਹੀ ਹੈ",
   "DOWNLOADING_1": "ਡਾਊਨਲੋਡਿੰਗ {{%s}}",

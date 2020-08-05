@@ -164,6 +164,7 @@
   "DISTRICT": "ಜಿಲ್ಲೆ",
   "DISTRICT_OPTION_TEXT": "ಜಿಲ್ಲೆ ಆಯ್ಕೆ ಮಾಡಿ",
   "DOCS": "ಡಾಕ್ಯುಮೆಂಟ್ಸ್",
+  "COLLECTION":"ಸಂಗ್ರಹ",
   "DOWNLOAD": "ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
   "DOWNLOADING": "ಡೌನ್ಲೋಡ್ ಆಗುತ್ತಿದೆ  {{%s}}% ",
   "DOWNLOADING_1": "ಡೌನ್ಲೋಡ್ ಆಗ್ತಿದೆ  {{%s}} ",

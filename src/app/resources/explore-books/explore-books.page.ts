@@ -81,14 +81,14 @@ import { Storage } from '@ionic/storage';
 export class ExploreBooksPage implements OnInit, OnDestroy {
   public pageId = 'ExploreBooksPage';
 
-  @ViewChild('searchInput') public searchInputRef: ElementRef;
+  // @ViewChild('searchInput') public searchInputRef: ElementRef;
   @ViewChildren('filteredItems') public filteredItemsQueryList: QueryList<any>;
 
   categoryGradeLevels: Array<any>;
   subjects: any;
   mimeTypes = [
     { name: 'ALL', selected: true, value: [], iconNormal: '', iconActive: '' },
-    { name: 'TEXTBOOK', value: [MimeType.COLLECTION], iconNormal: './assets/imgs/book.svg', iconActive: './assets/imgs/book-active.svg' },
+    { name: 'COLLECTION', value: [MimeType.COLLECTION], iconNormal: './assets/imgs/book.svg', iconActive: './assets/imgs/book-active.svg' },
     {
       name: 'VIDEOS',
       value: ['video/mp4', 'video/x-youtube', 'video/webm'],
@@ -339,7 +339,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       switchMap(() => {
         const searchCriteria: ContentSearchCriteria = {
           ...this.searchForm.getRawValue(),
-          query: this.searchInputRef.nativeElement['value'],
+          // query: this.searchInputRef.nativeElement['value'],
           searchType: SearchType.SEARCH,
           contentTypes: ContentType.FOR_LIBRARY_TAB,
           facets: Search.FACETS,
