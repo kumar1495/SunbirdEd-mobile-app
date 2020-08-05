@@ -111,8 +111,17 @@
           <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app language">
         </span>
         <div class="sb-language">
-          <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
+          <div class="sb-menu-item">{{'LANGUAGE' | translate}} hiii</div>
           <div class="sb-menu-item-language">{{selectedLanguage}}</div>
+        </div>
+      </ion-item>
+
+      <ion-item (click)="emitSideMenuItemEvent($event, 'ABOUT_US')">
+        <span class="sb-menu-icon sb-pt-6">
+          <img src="./assets/imgs/info.png" class="tool-icon" alt="select app language">
+        </span>
+        <div class="sb-language">
+          <div class="sb-menu-item">{{'ABOUT_US' | translate}}</div>
         </div>
       </ion-item>
 
@@ -178,6 +187,15 @@
         <div class="sb-language">
           <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
           <div class="sb-menu-item-language">{{selectedLanguage}}</div>
+        </div>
+      </ion-item>
+
+      <ion-item (click)="emitSideMenuItemEvent($event, 'ABOUT_US')">
+        <span class="sb-menu-icon sb-pt-6">
+          <img src="./assets/imgs/info.png" class="tool-icon" alt="select app language">
+        </span>
+        <div class="sb-language">
+          <div class="sb-menu-item">{{'ABOUT_US' | translate}}</div>
         </div>
       </ion-item>
 

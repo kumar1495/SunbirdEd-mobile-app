@@ -44,7 +44,8 @@ import {
   FormAndFrameworkUtilService,
   CanvasPlayerService,
   SplashScreenService,
-  ApiInterceptor
+  ApiInterceptor,
+  SlutilService
 } from '../services/index';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -472,7 +473,8 @@ declare const sbutility;
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
+    SlutilService
   ],
   bootstrap: [AppComponent],
   schemas: [

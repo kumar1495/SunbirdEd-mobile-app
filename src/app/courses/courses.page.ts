@@ -1,12 +1,14 @@
-import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { Events, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import { ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType } from '../../app/app.constant';
+import {
+  ContentCard, EventTopics, PreferenceKey, ProfileConstants,
+  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType
+} from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -28,6 +30,10 @@ import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { LocalCourseService } from '@app/services/local-course.service';
+import { HttpClient } from '@angular/common/http';
+import { AppConfig } from '@app/config/appConfig';
+import { Storage } from '@ionic/storage';
+import { SlutilService } from '@app/services/slutils-service';
 
 @Component({
   selector: 'app-courses',
@@ -96,6 +102,8 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   courseCardType = CourseCardGridTypes;
   loader: any;
+  createdFor: any = [];
+
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -118,7 +126,10 @@ export class CoursesPage implements OnInit, OnDestroy {
     private router: Router,
     private toastController: ToastController,
     private headerService: AppHeaderService,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private http: HttpClient,
+    private storage: Storage,
+    private slUtils: SlutilService
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -141,10 +152,18 @@ export class CoursesPage implements OnInit, OnDestroy {
    * Angular life cycle hooks
    */
   ngOnInit() {
-    this.getCourseTabData();
+    // this.getCourseTabData();
+
+    this.storage.get('subOrgIds').then(success => {
+      this.createdFor = (success && success.length) ? success : [];
+      this.getCourseTabData();
+    }).catch(error => {
+      this.createdFor = [];
+      this.getCourseTabData();
+    })
 
     this.events.subscribe('event:update_course_data', () => {
-        this.getEnrolledCourses();
+      this.getEnrolledCourses();
     });
   }
 
@@ -276,7 +295,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.getEnrolledCourses(false, true);
     });
 
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD,  () => {
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
       this.ngZone.run(() => {
         this.showSignInCard = false;
       })
@@ -301,7 +320,7 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
             if (this.enrolledCourses.length > 0) {
               const courseList: Array<Course> = [];
-              for (let count = 0; count < this.enrolledCourses.length; count++){
+              for (let count = 0; count < this.enrolledCourses.length; count++) {
                 courseList.push(this.enrolledCourses[count]);
                 this.enrolledCourses[count]['info_to_display'] =
                   this.localCourseService.getEnrolledCourseSectionHTMLData(this.enrolledCourses[count]);
@@ -346,53 +365,116 @@ export class CoursesPage implements OnInit, OnDestroy {
       pageAssembleCriteria = criteria;
     }
 
-    // pageAssembleCriteria.hardRefresh = hardRefresh;
+    this.createdFor.length ? pageAssembleCriteria.filters['createdFor'] = this.createdFor: null;
+    pageAssembleCriteria.filters['compatibilityLevel'] = {
+      "min": 1,
+      "max": 4
+    }
 
-    this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
-    .then((res: PageAssemble) => {
+    const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.kendraUrl + AppConfig.apiConstants.search;
+    const payload = {
+      url: AppConfig.environment + AppConfig.apiConstants.pageAssemble,
+      method: "POST",
+      body: {
+        request: {
+          ...pageAssembleCriteria,
+          source: 'app'
+        }
+      }
+    };
+
+
+    this.slUtils.apiMiddleWare(payload).then(res => {
       this.ssoSectionId = res.ssoSectionId;
-
-      this.ngZone.run(() => {
-        const sections = res.sections;
-        const newSections = [];
-        sections.forEach(element => {
-          const display = JSON.parse(element.display);
-          if (display.name) {
-            if (has(display.name, this.selectedLanguage)) {
-              const langs = [];
-              forEach(display.name, (value, key) => {
-                langs[key] = value;
-              });
-              element.name = langs[this.selectedLanguage];
-            }
-          }
-          newSections.push(element);
-        });
-
-        if (newSections.length) {
-          for (let i = 0; i < newSections.length; i++){
-            for (let j = 0; j < newSections[i].contents.length; j++) {
-              newSections[i].contents[j]['info_to_display'] = this.localCourseService.getCourseSectionHTMLData(newSections[i].contents[j]);
-              newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
-            }
+      const sections = res.sections;
+      const newSections = [];
+      sections.forEach(element => {
+        const display = JSON.parse(element.display);
+        if (display.name) {
+          if (has(display.name, this.selectedLanguage)) {
+            const langs = [];
+            forEach(display.name, (value, key) => {
+              langs[key] = value;
+            });
+            element.name = langs[this.selectedLanguage];
           }
         }
-
-        this.popularAndLatestCourses = newSections;
-        this.pageApiLoader = !this.pageApiLoader;
-        this.generateExtraInfoTelemetry(newSections.length);
-        this.checkEmptySearchResult();
-        });
-      }).catch((error: string) => {
-        this.ngZone.run(() => {
-          this.pageApiLoader = false;
-          if (error === 'CONNECTION_ERROR') {
-            this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-          } else if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
-            this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-          }
-        });
+        newSections.push(element);
       });
+
+      if (newSections.length) {
+        for (let i = 0; i < newSections.length; i++) {
+          for (let j = 0; j < newSections[i].contents.length; j++) {
+            newSections[i].contents[j]['info_to_display'] = this.localCourseService.getCourseSectionHTMLData(newSections[i].contents[j]);
+            newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
+          }
+        }
+      }
+
+      this.popularAndLatestCourses = newSections;
+      this.pageApiLoader = !this.pageApiLoader;
+      this.generateExtraInfoTelemetry(newSections.length);
+      this.checkEmptySearchResult();
+    }).catch(error => {
+      this.pageApiLoader = false;
+      if (error === 'CONNECTION_ERROR') {
+        this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      } else if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
+        this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+      }
+    })
+
+
+
+
+
+    // pageAssembleCriteria.hardRefresh = hardRefresh;
+
+    // this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
+    //   .then((res: PageAssemble) => {
+    //     this.ssoSectionId = res.ssoSectionId;
+
+    //     this.ngZone.run(() => {
+    //       const sections = res.sections;
+    //       const newSections = [];
+    //       sections.forEach(element => {
+    //         const display = JSON.parse(element.display);
+    //         if (display.name) {
+    //           if (has(display.name, this.selectedLanguage)) {
+    //             const langs = [];
+    //             forEach(display.name, (value, key) => {
+    //               langs[key] = value;
+    //             });
+    //             element.name = langs[this.selectedLanguage];
+    //           }
+    //         }
+    //         newSections.push(element);
+    //       });
+
+    //       if (newSections.length) {
+    //         for (let i = 0; i < newSections.length; i++) {
+    //           for (let j = 0; j < newSections[i].contents.length; j++) {
+    //             newSections[i].contents[j]['info_to_display'] = this.localCourseService.getCourseSectionHTMLData(newSections[i].contents[j]);
+    //             newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
+    //           }
+    //         }
+    //       }
+
+    //       this.popularAndLatestCourses = newSections;
+    //       this.pageApiLoader = !this.pageApiLoader;
+    //       this.generateExtraInfoTelemetry(newSections.length);
+    //       this.checkEmptySearchResult();
+    //     });
+    //   }).catch((error: string) => {
+    //     this.ngZone.run(() => {
+    //       this.pageApiLoader = false;
+    //       if (error === 'CONNECTION_ERROR') {
+    //         this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    //       } else if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
+    //         this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+    //       }
+    //     });
+    //   });
   }
 
   generateExtraInfoTelemetry(sectionsCount) {
@@ -481,7 +563,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       ContentFilterConfig.NAME_COURSE);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType : ContentType.FOR_COURSE_TAB,
+        contentType: ContentType.FOR_COURSE_TAB,
         source: PageId.COURSES,
         enrolledCourses: this.enrolledCourses,
         guestUser: this.guestUser,
@@ -885,7 +967,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
-      sort_by: { createdDate: SortOrder.DESC},
+      sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();
@@ -899,11 +981,11 @@ export class CoursesPage implements OnInit, OnDestroy {
               const batches = data;
               if (batches.length) {
                 batches.forEach((batch, key) => {
-                    if (batch.status === 1) {
-                      ongoingBatches.push(batch);
-                    } else {
-                      upcommingBatches.push(batch);
-                    }
+                  if (batch.status === 1) {
+                    ongoingBatches.push(batch);
+                  } else {
+                    upcommingBatches.push(batch);
+                  }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'showing-enrolled-ongoing-batch-popup',
@@ -960,11 +1042,11 @@ export class CoursesPage implements OnInit, OnDestroy {
       type: CorReleationDataType.ROOT_ID
     }];
     if (courseDetails.isFilterApplied) {
-     corRelationList.push({
-       id: 'filter',
-       type: CorReleationDataType.DISCOVERY_TYPE
-     });
-   }
+      corRelationList.push({
+        id: 'filter',
+        type: CorReleationDataType.DISCOVERY_TYPE
+      });
+    }
     const values = new Map();
     values['sectionName'] = courseDetails.sectionName;
     values['positionClicked'] = courseDetails.index;

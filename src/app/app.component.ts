@@ -1,7 +1,7 @@
 import { Router, NavigationExtras, NavigationStart, Event } from '@angular/router';
 import { Location } from '@angular/common';
 import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChild } from '@angular/core';
-import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
+import { Events, Platform, IonRouterOutlet, MenuController, AlertController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
@@ -12,6 +12,7 @@ import {
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
   CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService, ProfileService,
+  AuthService
 } from 'sunbird-sdk';
 import {
   InteractType,
@@ -41,6 +42,9 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import * as qs from 'qs';
+import { AppConfig } from '@app/config/appConfig';
+import { HttpClient } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
 
 declare const cordova;
 
@@ -77,6 +81,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('AUTH_SERVICE') private authService: AuthService,
+
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -100,7 +106,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
-    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+    private http: HttpClient,
+    private storage: Storage,
+    private alertCntrl: AlertController
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -167,7 +176,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.activePageService.computePageId(this.router.url)
       );
     }
-    
+
     this.notificationSrc.setupLocalNotification();
     this.triggerSignInEvent();
   }
@@ -318,6 +327,75 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
   }
 
+  checkAccessAPI() {
+    alert("in check")
+    this.authService.getSession().subscribe(session => {
+      if (session) {
+        alert(session.userToken);
+        const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.sunbird + AppConfig.apiConstants.userPrmission + '/' + session.userToken;
+        this.http.get(url).subscribe(success => {
+          alert(JSON.stringify(success))
+          if (success['result'].isAllowed) {
+            // setTimeout(() => {
+            //   this.commonUtilService
+            //     .showToast(this.commonUtilService.translateMessage('WELCOME_BACK', JSON.parse(res).firstName));
+            // }, 2500);
+            this.storage.set("subOrgIds", [success['result'].organisationId]).then(success => {
+              // console.log("success");
+            }).catch(error => {
+              // console.log("error")
+            })
+          } else {
+            this.unAutherizedAlert(success['result'].validationMessage);
+          }
+        }, error => {
+
+        })
+      } else {}
+    }, error => {
+    })
+  }
+
+  async unAutherizedAlert(message) {
+    let alert = await this.alertCntrl.create({
+      header: 'Unauthorized',
+      subHeader: message,
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Re-login',
+        role: 'cancel',
+        handler: () => {
+          // this.oAuth.doLogOut();
+          this.storage.clear();
+          (<any>window).splashscreen.clearPrefs();
+          this.logoutHandlerService.onLogout();
+          // const profile: Profile = new Profile();
+          // this.preferences.getString('GUEST_USER_ID_BEFORE_LOGIN')
+          //   .then(val => {
+          //     if (val !== '') {
+          //       profile.uid = val;
+          //     } else {
+          //       this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
+          //     }
+
+          //     profile.handle = 'Guest1';
+          //     profile.profileType = ProfileType.TEACHER;
+          //     profile.source = UserSource.LOCAL;
+
+          //     this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+          //     this.profileService.setCurrentProfile(true, profile).then(() => {
+          //       this.navigateToAptPage();
+          //     }).catch(() => {
+          //       this.navigateToAptPage();
+          //     });
+          //   });
+          // console.log('Cancel clicked');
+        }
+      },]
+    });
+    await alert.present();
+  }
+
   /* Notification data will be received in data variable
    * can take action on data variable
    */
@@ -373,6 +451,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
+        this.checkAccessAPI();
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
         } else {
@@ -716,6 +795,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
         break;
 
+      case 'ABOUT_US':
+        this.router.navigate([`/ap-about`]);
+        break;
+
       case 'LOGOUT':
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
@@ -758,23 +841,23 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (response) {
           let cData: CorrelationData[] = [];
           const utmValue = response['val'];
-          const params: {[param: string]: string} = qs.parse(utmValue);
+          const params: { [param: string]: string } = qs.parse(utmValue);
           const utmParams = {};
           Object.entries(params).forEach(([key, value]) => {
             const chengeKeyUpperCase = key.split('_').map((elem) => {
               return (elem.charAt(0).toUpperCase() + elem.slice(1));
-               });
+            });
 
             utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
-        });
-          if (Object.keys(utmParams)) {
-          cData = Object.keys(utmParams).map((key) => {
-            if (utmParams[key] !== undefined) {
-
-              return {id: key, type: utmParams[key]};
-            }
           });
-        }
+          if (Object.keys(utmParams)) {
+            cData = Object.keys(utmParams).map((key) => {
+              if (utmParams[key] !== undefined) {
+
+                return { id: key, type: utmParams[key] };
+              }
+            });
+          }
           try {
             const url: URL = new URL(params['utm_content']);
             const overrideChannelSlug = url.searchParams.get('channel');
@@ -783,10 +866,11 @@ export class AppComponent implements OnInit, AfterViewInit {
                 id: CorReleationDataType.SOURCE,
                 type: overrideChannelSlug
               });
-            }} catch (e) {
-              console.error(e);
-
             }
+          } catch (e) {
+            console.error(e);
+
+          }
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
@@ -803,7 +887,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             undefined,
             cData);
           this.utilityService.clearUtmInfo();
-      }
+        }
       })
       .catch(error => {
         console.log('Error is', error);

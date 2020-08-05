@@ -4,7 +4,7 @@ import {
   ViewChild, ViewChildren, OnInit
 } from '@angular/core';
 import { Platform, ModalController, Events } from '@ionic/angular';
-import { AudienceFilter, ContentType, MimeType, Search, ExploreConstants, RouterLinks,ContentFilterConfig } from 'app/app.constant';
+import { AudienceFilter, ContentType, MimeType, Search, ExploreConstants, RouterLinks, ContentFilterConfig } from 'app/app.constant';
 import { Map } from 'app/telemetryutil';
 import {
   Environment,
@@ -32,7 +32,8 @@ import { Observable, Subscription, of } from 'rxjs';
 import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
-import { tap, switchMap, catchError, mapTo, debounceTime} from 'rxjs/operators';
+import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-explore-books',
@@ -131,6 +132,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   mediumList: Array<FilterValue>;
   corRelationList: Array<CorrelationData>;
   checkedSortByButton = true;
+  createdFor: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -144,12 +146,13 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private platform: Platform,
     private router: Router,
     private location: Location,
-    private events:Events,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private events: Events,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private storage: Storage
   ) {
     // const extras = this.router.getCurrentNavigation().extras.state;
     let extras;
-    if(this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state){
+    if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
       extras = this.router.getCurrentNavigation().extras.state
     }
     if (extras) {
@@ -188,7 +191,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
   }
 
-  
+
 
   ionViewDidEnter() {
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
@@ -197,7 +200,15 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    const subOg = await this.storage.get('subOrgIds');
+    this.createdFor = subOg ? subOg : []
+    // this.storage.get('subOrgIds').then(success => {
+    //   this.createdFor = success
+    // }).catch(error => {
+    //   this.createdFor = [];
+
+    // })
 
     this.searchFormSubscription = this.onSearchFormChange()
       .subscribe(() => { });
@@ -335,7 +346,11 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           audience: this.audienceFilter,
           mode: 'soft',
           languageCode: this.translate.currentLang,
-          fields: ExploreConstants.REQUIRED_FIELDS
+          fields: ExploreConstants.REQUIRED_FIELDS,
+          filters: {
+            channel: this.createdFor,
+            mode: "soft"
+          }
         };
         const values = new Map();
         values['searchCriteria'] = searchCriteria;
@@ -468,10 +483,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         medium: data.values.medium || []
       });
       this.corRelationList = [{
-        id: ( data.values.board && data.values.board.length )  ?  data.values.board[0] : '',
+        id: (data.values.board && data.values.board.length) ? data.values.board[0] : '',
         type: 'Board'
       }, {
-        id: (data.values.medium && data.values.medium.length) ? data.values.medium[0] : '' ,
+        id: (data.values.medium && data.values.medium.length) ? data.values.medium[0] : '',
         type: 'Medium'
       }];
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -486,9 +501,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }
     if (!data) {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.EXPLORE_MORE_CONTENT,
-          Environment.HOME,
-          false);
+        PageId.EXPLORE_MORE_CONTENT,
+        Environment.HOME,
+        false);
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -514,7 +529,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.selectedContentType = 'all';
     }
     this.searchFormSubscription = this.onSearchFormChange()
-    .subscribe(() => { });
+      .subscribe(() => { });
 
   }
 

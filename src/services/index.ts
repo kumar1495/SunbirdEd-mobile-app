@@ -1,3 +1,5 @@
+import { SlutilService } from './slutils-service';
+
 export { AppGlobalService } from './app-global-service.service';
 export { CourseUtilService } from './course-util.service';
 export { QRScannerResultHandler } from './qrscanresulthandler.service';
@@ -21,4 +23,5 @@ export { ContentShareHandlerService } from './content/content-share-handler.serv
 export { CanvasPlayerService } from './canvas-player.service';
 export { SplashScreenService } from './splash-screen.service';
 export { LocalCourseService } from './local-course.service';
+export { SlutilService } from './slutils-service'
 export * from './api-interceptor';
