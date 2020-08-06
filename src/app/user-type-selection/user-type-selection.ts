@@ -31,9 +31,13 @@ const borderColor = '#F7F7F7';
 })
 
 export class UserTypeSelectionPage implements OnInit {
+  otherCardBorderColor = '#F7F7F7';
   teacherCardBorderColor = '#F7F7F7';
   studentCardBorderColor = '#F7F7F7';
-  otherCardBorderColor = '#F7F7F7';
+  smcCardBorderColor='#F7F7F7';
+  eoCardBorderColor='#F7F7F7';
+  slCardBorderColor='#F7F7F7';
+  othrCardBorderColor='#F7F7F7';
   userTypeSelected = false;
   selectedUserType: ProfileType;
   continueAs = '';
@@ -134,17 +138,29 @@ export class UserTypeSelectionPage implements OnInit {
   selectStudentCard() {
     this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
   }
+  selectSMCCard(){
+    this.selectCard('USER_TYPE_SMC',ProfileType.TEACHER);
+  }
+  selectEOCard(){
+    this.selectCard('USER_TYPE_EO', ProfileType.TEACHER);
+  }
+  selectSLCard(){
+    this.selectCard('USER_TYPE_SL', ProfileType.TEACHER);
+  }
 
   selectOtherCard() {
-    this.selectCard('USER_TYPE_3', ProfileType.OTHER);
+    this.selectCard('USER_TYPE_Other', ProfileType.OTHER);
   }
 
   selectCard(userType, profileType) {
     this.zone.run(() => {
       this.userTypeSelected = true;
       this.teacherCardBorderColor = (userType === 'USER_TYPE_1') ? selectedCardBorderColor : borderColor;
-      this.studentCardBorderColor = (userType === 'USER_TYPE_2') ? selectedCardBorderColor : borderColor;
-      this.otherCardBorderColor = (userType === 'USER_TYPE_3') ? selectedCardBorderColor : borderColor;
+      this.studentCardBorderColor = (userType === 'USER_TYPE_1') ? borderColor : selectedCardBorderColor;
+      this.smcCardBorderColor = (userType === 'USER_TYPE_SMC') ? selectedCardBorderColor : borderColor;
+      this.slCardBorderColor = (userType === 'USER_TYPE_SL') ? selectedCardBorderColor : borderColor;
+      this.eoCardBorderColor = (userType === 'USER_TYPE_EO') ? selectedCardBorderColor : borderColor;
+      this.othrCardBorderColor= (userType === 'USER_TYPE_Other') ? selectedCardBorderColor : borderColor;
       this.selectedUserType = profileType;
       this.continueAs = this.commonUtilService.translateMessage(
         'CONTINUE_AS_ROLE',
