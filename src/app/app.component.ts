@@ -154,6 +154,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.getUtmParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
+      this.checkAccessAPI();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -328,13 +329,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   checkAccessAPI() {
-    alert("in check")
     this.authService.getSession().subscribe(session => {
       if (session) {
-        alert(session.userToken);
         const url = AppConfig.apiBaseUrl + AppConfig.baseUrls.sunbird + AppConfig.apiConstants.userPrmission + '/' + session.userToken;
         this.http.get(url).subscribe(success => {
-          alert(JSON.stringify(success))
           if (success['result'].isAllowed) {
             // setTimeout(() => {
             //   this.commonUtilService

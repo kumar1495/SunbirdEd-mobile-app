@@ -44,6 +44,7 @@ import { Subscription, Observable, from, Subject } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AppConfig } from '../../config/appConfig';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
 
 declare const cordova;
 @Component({
@@ -106,6 +107,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   autoCompleteOptions: Array<Object>;
   searchFieldUpdate = new Subject<string>();
   didYouMean: string;
+  createdFor = [];
 
 
   @ViewChild('contentView') contentView: IonContent;
@@ -135,10 +137,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private location: Location,
     private router: Router,
     private navCtrl: NavController,
-    private http: HttpClient
+    private http: HttpClient,
+    private storage: Storage
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
+    this.storage.get('subOrgIds').then(success => {
+      this.createdFor = success;
+    })
 
     if (extras) {
       this.dialCode = extras.dialCode;
@@ -758,6 +764,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           // channel: "0124487522476933120",
           board: null,
           contentType: this.contentType,
+          createdFor: this.createdFor,
           isACourse: isACourse
         },
         limit: 20,
@@ -772,6 +779,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         offset: 0
       }
     }
+    this.createdFor && this.createdFor.length ? payload.request.filters.createdFor = this.createdFor : null;
 
     if (this.profile && this.profile.board && this.profile.board.length) {
       payload.request.filters.board
@@ -832,11 +840,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         purpose: [],
         channel: [],
         mimeType: [],
-        subject: []
+        subject: [],
+        createdFor: this.createdFor,
       }
 
     };
-
+    this.createdFor && this.createdFor.length ? contentSearchRequest.filters.createdFor = this.createdFor : null;
     this.isDialCodeSearch = false;
 
     this.dialCodeContentResult = undefined;

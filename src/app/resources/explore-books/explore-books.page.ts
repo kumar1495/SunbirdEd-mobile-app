@@ -24,7 +24,7 @@ import {
   ProfileType,
   SearchType
 } from 'sunbird-sdk';
-import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService, FormAndFrameworkUtilService } from '@app/services';
+import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService, FormAndFrameworkUtilService, SlutilService } from '@app/services';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -34,6 +34,8 @@ import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
 import { Storage } from '@ionic/storage';
+import { AppConfig } from '@app/config/appConfig';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-explore-books',
@@ -148,7 +150,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private location: Location,
     private events: Events,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private storage: Storage
+    private storage: Storage,
+    private http: HttpClient,
+    private slUtils: SlutilService
   ) {
     // const extras = this.router.getCurrentNavigation().extras.state;
     let extras;
@@ -202,7 +206,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
   async ionViewWillEnter() {
     const subOg = await this.storage.get('subOrgIds');
-    this.createdFor = subOg ? subOg : []
+    this.createdFor = subOg ? subOg : ""
     // this.storage.get('subOrgIds').then(success => {
     //   this.createdFor = success
     // }).catch(error => {
@@ -348,10 +352,14 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           languageCode: this.translate.currentLang,
           fields: ExploreConstants.REQUIRED_FIELDS,
           filters: {
-            channel: this.createdFor,
-            mode: "soft"
+            contentType: ContentType.FOR_LIBRARY_TAB,
+            // createdFor: (this.createdFor && this.createdFor.length) ? this.createdFor[0] : "",
+            // mimeType: this.selectedContentType
+            // mode: "soft"
           }
         };
+        this.createdFor && this.createdFor.length ? searchCriteria.filters.createdFor = this.createdFor : null;
+        searchCriteria.filters.mimeType = searchCriteria.mimeType;
         const values = new Map();
         values['searchCriteria'] = searchCriteria;
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -363,7 +371,34 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           values);
         this.showLoader = true;
         this.contentSearchResult = [];
-        return this.contentService.searchContent(searchCriteria).pipe(
+
+        const url: string = AppConfig.apiBaseUrl + AppConfig.baseUrls.sunbird + AppConfig.apiConstants.middleware;
+        const headers = {
+          "X-Channel-Id": AppConfig.rootOrgId,
+          "ts": new Date(),
+          "X-Org-code": AppConfig.rootOrgId,
+          "X-App-Id": "production.production.mobile",
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-Source": "app"
+        };
+        const payload = {
+          url: AppConfig.environment + AppConfig.apiConstants.searchContent,
+          method: "POST",
+          body: {
+            request: {
+              ...searchCriteria,
+              source: 'app'
+            }
+          },
+          headers: headers
+        };
+
+        
+
+        // ******************************************
+
+        return this.http.post(url, payload).pipe(
           catchError(() => {
             this.zone.run(() => {
               this.showLoader = false;
@@ -379,22 +414,23 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       tap(() => {
         (window as any).cordova.plugins.Keyboard.close();
       }),
-      tap((result?: ContentSearchResult) => {
+      tap((result) => {
         this.zone.run(() => {
-          if (result) {
-            this.contentSearchResult = result.contentDataList || [];
+          debugger
+          if (result && result.result) {
+            this.contentSearchResult = result.result.result.content || [];
             let facetFilters: Array<ContentSearchFilter>;
             this.showLoader = false;
-            facetFilters = result.filterCriteria.facetFilters;
+            // facetFilters = result.filterCriteria.facetFilters;
 
-            this.fetchingBoardMediumList(facetFilters);
+            // this.fetchingBoardMediumList(facetFilters);
             this.showLoader = false;
-            const gradeLevel = result.filterCriteria.facetFilters.find((f) => f.name === 'gradeLevel').values;
-            gradeLevel.sort((a, b) => b.count - a.count);
-            this.categoryGradeLevels = this.union(this.categoryGradeLevels, gradeLevel);
-            const subjects = result.filterCriteria.facetFilters.find((f) => f.name === 'subject').values;
-            subjects.sort((a, b) => b.count - a.count);
-            this.subjects = this.union(this.subjects, subjects);
+            // const gradeLevel = result.filterCriteria.facetFilters.find((f) => f.name === 'gradeLevel').values;
+            // gradeLevel.sort((a, b) => b.count - a.count);
+            // this.categoryGradeLevels = this.union(this.categoryGradeLevels, gradeLevel);
+            // const subjects = result.filterCriteria.facetFilters.find((f) => f.name === 'subject').values;
+            // subjects.sort((a, b) => b.count - a.count);
+            // this.subjects = this.union(this.subjects, subjects);
             value['searchResult'] = this.contentSearchResult.length;
           }
         });
@@ -410,6 +446,60 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       }),
       mapTo(undefined)
     );
+
+
+
+
+
+
+    ///////////////////////////////////////
+    //     return this.contentService.searchContent(searchCriteria).pipe(
+    //       catchError(() => {
+    //         this.zone.run(() => {
+    //           this.showLoader = false;
+    //           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+    //             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+    //           }
+    //         });
+
+    //         return of(undefined);
+    //       })
+    //     );
+    //   }),
+    //   tap(() => {
+    //     (window as any).cordova.plugins.Keyboard.close();
+    //   }),
+    //   tap((result?: ContentSearchResult) => {
+    //     this.zone.run(() => {
+    //       if (result) {
+    //         this.contentSearchResult = result.contentDataList || [];
+    //         let facetFilters: Array<ContentSearchFilter>;
+    //         this.showLoader = false;
+    //         facetFilters = result.filterCriteria.facetFilters;
+
+    //         this.fetchingBoardMediumList(facetFilters);
+    //         this.showLoader = false;
+    //         const gradeLevel = result.filterCriteria.facetFilters.find((f) => f.name === 'gradeLevel').values;
+    //         gradeLevel.sort((a, b) => b.count - a.count);
+    //         this.categoryGradeLevels = this.union(this.categoryGradeLevels, gradeLevel);
+    //         const subjects = result.filterCriteria.facetFilters.find((f) => f.name === 'subject').values;
+    //         subjects.sort((a, b) => b.count - a.count);
+    //         this.subjects = this.union(this.subjects, subjects);
+    //         value['searchResult'] = this.contentSearchResult.length;
+    //       }
+    //     });
+    //   }),
+    //   tap(() => {
+    //     this.telemetryGeneratorService.generateInteractTelemetry(
+    //       InteractType.OTHER,
+    //       InteractSubtype.SEARCH_COMPLETED,
+    //       Environment.HOME,
+    //       PageId.EXPLORE_MORE_CONTENT,
+    //       undefined,
+    //       value);
+    //   }),
+    //   mapTo(undefined)
+    // );
 
   }
 
