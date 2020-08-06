@@ -51,7 +51,7 @@ export class TabsPage implements OnInit, AfterViewInit {
       if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
         initTabs(this.container, GUEST_TEACHER_TABS);
       } else {
-        initTabs(this.container, GUEST_STUDENT_TABS);
+        initTabs(this.container, GUEST_TEACHER_TABS);
       }
     } else {
       this.storage.set('token', session.access_token);
@@ -113,7 +113,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionTabsDidChange(event: any) {
-    this.tabs[2].root = event.tab;
+    // this.tabs[2].root = event.tab;
     this.events.publish(EventTopics.TAB_CHANGE, event.tab);
     if (event.tab === 'resources') {
       event.tab = PageId.LIBRARY;

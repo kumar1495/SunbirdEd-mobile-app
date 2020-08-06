@@ -117,7 +117,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   selectedGrade: string;
   selectedMedium: string;
   selectedContentType = 'all';
-  coachTimeout: any;
+  // coachTimeout: any;
 
   searchForm: FormGroup = new FormGroup({
     grade: new FormControl([]),
@@ -195,9 +195,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
   ionViewDidEnter() {
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    this.coachTimeout = setTimeout(() => {
-      this.appGlobalService.showCouchMarkScreen();
-    }, 2000);
+    // this.coachTimeout = setTimeout(() => {
+    //   this.appGlobalService.showCouchMarkScreen();
+    // }, 2000);
   }
 
   async ionViewWillEnter() {
@@ -461,7 +461,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }
     window.removeEventListener('keyboardDidHide', this.showSortByButton);
     window.removeEventListener('keyboardWillShow', this.hideSortByButton);
-    this.coachTimeout.clearTimeout();
+    // this.coachTimeout.clearTimeout();
 
   }
 

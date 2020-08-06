@@ -2,7 +2,7 @@
   <h6 class="gray-color" text-center>{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
 
   <!-- Student card -->
-  <ion-card (click)="selectStudentCard()" class="card-related-style" style="margin-top:20px"
+  <!-- <ion-card (click)="selectStudentCard()" class="card-related-style" style="margin-top:20px"
     [ngStyle]="{'border-color': studentCardBorderColor}">
     <ion-grid>
       <ion-row>
@@ -17,10 +17,10 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  </ion-card>
+  </ion-card> -->
 
   <!-- Teacher card -->
-  <ion-card (click)="selectTeacherCard()" class="card-related-style"
+  <!-- <ion-card (click)="selectTeacherCard()" class="card-related-style"
     [ngStyle]="{'border-color': teacherCardBorderColor}">
     <ion-grid>
       <ion-row>
@@ -37,11 +37,118 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <!-- <p class="ion-padding-start black-color">{{ "IAM_ABOVE_18_YEARS_AGE" | translate }}</p> -->
+    <p class="ion-padding-start black-color">{{ "IAM_ABOVE_18_YEARS_AGE" | translate }}</p>
+  </ion-card> -->
+
+
+
+
+  <!-- Teacher card -->
+  <ion-card (click)="selectTeacherCard()" class="card-related-style" [ngStyle]="{'border-color': teacherCardBorderColor}">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <img class="thumbnail" [src]="teacherImageUri" />
+        </ion-col>
+        <ion-col size="9">
+          <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
+          <!-- <ul class="description">
+            <li>{{ 'TEACHER_ROLE_DESC_1' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_2' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_3' | translate }}</li>
+          </ul> -->
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-card>
 
+  <!-- School leader card -->
+  <ion-card (click)="selectSLCard()" class="card-related-style" [ngStyle]="{'border-color': slCardBorderColor}">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <img class="thumbnail" [src]="teacherImageUri" />
+          <!-- <ion-icon class="thumbnail" name="contact" style="color:#1185bf;"></ion-icon> -->
+        </ion-col>
+        <ion-col size="9">
+          <h4 class="card-title">{{ 'USER_TYPE_SL' | translate }}</h4>
+          <!-- <ul class="description">
+            <li>{{ 'TEACHER_ROLE_DESC_1' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_2' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_3' | translate }}</li>
+          </ul> -->
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+   <!-- Education Officer card -->
+   <ion-card (click)="selectEOCard()" class="card-related-style" [ngStyle]="{'border-color': eoCardBorderColor}">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <img class="thumbnail" [src]="teacherImageUri" />
+        </ion-col>
+        <ion-col size="9">
+          <h4 class="card-title">{{ 'USER_TYPE_EO' | translate }}</h4>
+          <!-- <ul class="description">
+            <li>{{ 'TEACHER_ROLE_DESC_1' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_2' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_3' | translate }}</li>
+          </ul> -->
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+   <!-- SMC card -->
+   <ion-card (click)="selectSMCCard()" class="card-related-style" [ngStyle]="{'border-color': smcCardBorderColor}">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <img class="thumbnail" [src]="teacherImageUri" />
+        </ion-col>
+        <ion-col size="9">
+          <h4 class="card-title">{{ 'USER_TYPE_SMC' | translate }}</h4>
+          <!-- <ul class="description">
+            <li>{{ 'TEACHER_ROLE_DESC_1' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_2' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_3' | translate }}</li>
+          </ul> -->
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+   <!-- Other card -->
+   <ion-card (click)="selectOtherCard()" class="card-related-style" [ngStyle]="{'border-color': othrCardBorderColor}">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <img class="thumbnail" [src]="teacherImageUri" />
+        </ion-col>
+        <ion-col size="9">
+          <h4 class="card-title">{{ 'USER_TYPE_Other' | translate }}</h4>
+          <!-- <ul class="description">
+            <li>{{ 'TEACHER_ROLE_DESC_1' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_2' | translate }}</li>
+            <li>{{ 'TEACHER_ROLE_DESC_3' | translate }}</li>
+          </ul> -->
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+
+
+
+
+
+
+
+
+
+
+
   <!-- Other card -->
-  <ion-card (click)="selectOtherCard()" class="card-related-style"
+  <!-- <ion-card (click)="selectOtherCard()" class="card-related-style"
     [ngStyle]="{'border-color': otherCardBorderColor}">
     <ion-grid>
       <ion-row>
@@ -57,8 +164,8 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <!-- <p class="ion-padding-start black-color">{{ "IAM_ABOVE_18_YEARS_AGE" | translate }}</p> -->
-  </ion-card>
+    <p class="ion-padding-start black-color">{{ "IAM_ABOVE_18_YEARS_AGE" | translate }}</p>
+  </ion-card> -->
 
 </ion-content>
 
