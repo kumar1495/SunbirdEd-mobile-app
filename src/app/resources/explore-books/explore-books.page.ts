@@ -80,7 +80,7 @@ import { tap, switchMap, catchError, mapTo, debounceTime} from 'rxjs/operators';
 export class ExploreBooksPage implements OnInit, OnDestroy {
   public pageId = 'ExploreBooksPage';
 
-  // @ViewChild('searchInput') public searchInputRef: ElementRef;
+  @ViewChild('searchInput') public searchInputRef: ElementRef;
   @ViewChildren('filteredItems') public filteredItemsQueryList: QueryList<any>;
 
   categoryGradeLevels: Array<any>;
@@ -212,12 +212,15 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     // this.handleBackButton();
     // this.headerService.showHeaderWithBackButton();
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+      // this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download']);
+
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+      // this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download']);
 
     window.addEventListener('keyboardDidHide', this.showSortByButton);
     window.addEventListener('keyboardWillShow', this.hideSortByButton);
@@ -328,7 +331,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       switchMap(() => {
         const searchCriteria: ContentSearchCriteria = {
           ...this.searchForm.getRawValue(),
-          // query: this.searchInputRef.nativeElement['value'],
+          query: this.searchInputRef.nativeElement['value'],
           searchType: SearchType.SEARCH,
           contentTypes: ContentType.FOR_LIBRARY_TAB,
           facets: Search.FACETS,
