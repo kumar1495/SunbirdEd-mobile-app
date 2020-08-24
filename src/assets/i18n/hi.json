@@ -501,7 +501,7 @@
   "SHARE_APP_LINK": "{{app_name}} ऐप से प्राप्त करें: {{play_store_url}}",
   "SHARE_CONTENT_FAILED": "कंटेंट शेयर करने में असमर्थ",
   "SHARE_CONTENT_FILE": "{{app_name}}: से फाइल भेजी\nनाम: {{content_name}}\n{{play_store_url}}: से {{app_name}} प्राप्त करें",
-  "SHARE_CONTENT_LINK": "{{content_link}} पर {{app_name}} पर {{content_name}} देखें\n{{play_store_url}} से {{app_name}} ऐप प्राप्त करें",
+  "SHARE_CONTENT_LINK": "{{content_link}} पर {{app_name}} पर {{content_name}} देखें",
   "SHARE_LINK": "लिंक शेयर करें",
   "SHARE_TELEMETRY": "टेलीमेट्री शेयर करें",
   "SHARE_TELEMETRY_FAILED": "टेलीमेट्री शेयर करने में असमर्थ",

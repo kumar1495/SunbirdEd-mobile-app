@@ -142,7 +142,8 @@ export class ExploreConstants {
         'subject',
         'streamingUrl',
         'framework',
-        'appIcon'
+        'appIcon',
+        'visibility'
     ];
 }
 export class AudienceFilter {

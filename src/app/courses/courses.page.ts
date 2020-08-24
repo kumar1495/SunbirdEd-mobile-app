@@ -166,12 +166,16 @@ export class CoursesPage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.isVisible = true;
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
+      // this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download']);
+
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
+    // this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
+
+    this.headerService.showHeaderWithHomeButton(['search', 'download']);
   }
 
   ionViewDidEnter() {

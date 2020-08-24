@@ -63,7 +63,8 @@ export class ContentShareHandlerService {
         content.contentData.contentType, corRelationList, rollup);
       const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {app_name: this.appName,
          content_name: content.contentData.name, content_link: this.getContentUtm(shareParams.link, content),
-           play_store_url: await this.getPackageNameWithUTM(true)});
+          //  play_store_url: await this.getPackageNameWithUTM(true)
+          });
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
@@ -87,7 +88,8 @@ export class ContentShareHandlerService {
           this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
         } else if (shareParams.byFile) {
           const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_FILE', {
-            app_name: this.appName, content_name: content.contentData.name, play_store_url: await this.getPackageNameWithUTM(true)
+            app_name: this.appName, content_name: content.contentData.name,
+            //  play_store_url: await this.getPackageNameWithUTM(true)
           });
           this.social.share(shareLink, '', '' + response.exportedFilePath, '');
         }

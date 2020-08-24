@@ -501,10 +501,40 @@ export class CollectionDetailEtbPage implements OnInit {
         }
       }).catch((error) => {
         console.log('error while loading content details', error);
-        this.showSheenAnimation = false;
-        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-        this.location.back();
+        // this.showSheenAnimation = false;
+        // this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        // this.location.back();
+        this.getContentHeirarchy(identifier, refreshContentDetails);
       });
+  }
+
+  getContentHeirarchy(identifier, refreshContentDetails: boolean) {
+    const option: ContentDetailRequest = {
+      contentId: identifier,
+      attachFeedback: true,
+      attachContentAccess: true,
+      emitUpdateIfAny: refreshContentDetails
+    };
+    this.contentService.getContentHeirarchy(option).toPromise()
+    .then((content: Content) => {
+      this.showSheenAnimation = false;
+      this.contentDetail = content;
+      this.childrenData = content.children;
+      this.showSheenAnimation = false;
+      this.toggleGroup(0, this.content);
+      this.telemetryGeneratorService.generatefastLoadingTelemetry(
+        InteractSubtype.FAST_LOADING_FINISHED,
+        PageId.COLLECTION_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList
+      );
+    }).catch(() => {
+      this.showSheenAnimation = false;
+      this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+      this.location.back();
+    });
   }
 
   showLicensce() {

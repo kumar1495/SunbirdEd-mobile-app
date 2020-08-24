@@ -33,6 +33,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 import { tap, switchMap, catchError, mapTo, debounceTime} from 'rxjs/operators';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Component({
   selector: 'app-explore-books',
@@ -145,7 +146,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private router: Router,
     private location: Location,
     private events:Events,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
   ) {
     // const extras = this.router.getCurrentNavigation().extras.state;
     let extras;
@@ -224,6 +226,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
     window.addEventListener('keyboardDidHide', this.showSortByButton);
     window.addEventListener('keyboardWillShow', this.hideSortByButton);
+    this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
   }
 
   handleHeaderEvents($event) {
@@ -379,10 +382,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
             this.showLoader = false;
             const gradeLevel = result.filterCriteria.facetFilters.find((f) => f.name === 'gradeLevel').values;
             gradeLevel.sort((a, b) => b.count - a.count);
-            this.categoryGradeLevels = this.union(this.categoryGradeLevels, gradeLevel);
+            // this.categoryGradeLevels = this.union(this.categoryGradeLevels, gradeLevel);
             const subjects = result.filterCriteria.facetFilters.find((f) => f.name === 'subject').values;
             subjects.sort((a, b) => b.count - a.count);
-            this.subjects = this.union(this.subjects, subjects);
+            // this.subjects = this.union(this.subjects, subjects);
             value['searchResult'] = this.contentSearchResult.length;
           }
         });

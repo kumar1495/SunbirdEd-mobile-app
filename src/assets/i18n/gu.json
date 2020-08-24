@@ -500,7 +500,7 @@
   "SHARE_APP_LINK": " {{play_store_url}} પરથી {{app_name}} એપ મેળવો.",
   "SHARE_CONTENT_FAILED": "કન્ટેન્ટ શેર કરવામાં અસમર્થ",
   "SHARE_CONTENT_FILE": "ફાઇલ આનાથી મોકલાયેલ: {{app_name}}\nનામ: {{content_name}}\n{{app_name}} એપ {{play_store_url}} માંથી મેળવો ",
-  "SHARE_CONTENT_LINK": " {{content_name}} {{app_name}} પર {{content_link}} માંથી જુઓ .\n {{app_name}} એપ {{play_store_url}} માંથી મેળવો",
+  "SHARE_CONTENT_LINK": " {{content_name}} {{app_name}} પર {{content_link}} માંથી જુઓ .",
   "SHARE_LINK": "લિંક શેર કરો",
   "SHARE_TELEMETRY": "ટેલીમેટ્રી શેર કરો",
   "SHARE_TELEMETRY_FAILED": "ટેલિમેટ્રી શેર કરવામાં અસમર્થ",
