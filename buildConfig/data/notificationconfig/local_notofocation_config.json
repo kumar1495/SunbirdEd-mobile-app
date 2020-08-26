@@ -6,31 +6,31 @@
     "interval": "weekday",
     "translations": {
       "en": {
-        "title": "Sunbird",
+        "title": "Bodh",
         "msg": "Learn something new on {{%s}} today!"
       },
       "hi": {
-        "title": "Sunbird",
+        "title": "Bodh",
         "msg": "आज {{%s}} से कुछ नया सीखे!"
       },
       "kn": {
-        "title": "Sunbird",
+        "title": "Bodh",
         "msg": "{{%s}} ದಲ್ಲಿ ಇಂದು ಹೊಸತೇನಾದರೂ ಕಲಿಯಿರಿ! "
       },
       "ta": {
-        "title": "Sunbird",
+        "title": "Bodh",
         "msg": "இன்று {{%s}} இல் புதியவற்றைக் கற்றுக்கொள்ளுங்கள்!"
       },
       "te": {
-        "title": "Sunbird",
+        "title": "Bodh",
         "msg": "నేడు {{%s}} లో కొత్త విషయాలు నేర్చుకోండి!"
       },
       "ur": {
-        "title": "Sunbird",
+        "title": "Bodh",
         "msg": "{{%s}} پر آج کچھ نیا  سیکھیں!"
       },
       "default": {
-        "title": "Sunbird",
+        "title": "Bodh",
         "msg": "Learn something new on {{%s}} today!"
       }
     }
