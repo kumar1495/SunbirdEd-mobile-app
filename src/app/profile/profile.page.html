@@ -141,7 +141,7 @@
             </div>
         </div>
     </div>
-    <div class="school-details" *ngIf="profile?.framework">
+    <!-- <div class="school-details" *ngIf="profile?.framework">
         <div class="container" *ngIf="profile?.framework?.board">
             <div>{{'BOARD' | translate }}: </div>
             <div class="bolder">{{profile?.framework?.board.join(', ')}} &lrm;</div>
@@ -163,7 +163,7 @@
                 {{'EDIT' | translate }}
             </ion-button>
         </div>
-    </div>
+    </div> -->
     <div class="badges ion-text-center" padding-horizontal *ngIf="profile?.badgeAssertions?.length > 0">
         <p class="bolder f16">{{'MY_BADGES' | translate }} ({{profile?.badgeAssertions?.length}})&lrm;</p>
         <ion-avatar item-center="" *ngFor="let batch of profile.badgeAssertions | slice : startLimit:badgesLimit;">

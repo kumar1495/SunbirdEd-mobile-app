@@ -128,7 +128,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
-    } else if (this.isOnboardingCompleted || session) {
+    } else if (true || session) {
+    // } else if (this.isOnboardingCompleted || session) {
       this.handleNavigation(urlMatch, content, dialCode, inputUrl);
     } else if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
       const params = {

@@ -343,6 +343,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.isBatchNotStarted = false; // this is needed to change behaviour onclick of individual content
     });
 
+
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
+      this.userId = this.appGlobalService.getUserId();
+      this.checkLoggedInOrGuestUser();
+      this.checkCurrentUserType();
+    });
+
     this.events.subscribe('courseToc:content-clicked', (data) => {
       console.log('courseToc:content-clicked', data);
       if (this.course.createdBy !== this.userId) {
