@@ -158,7 +158,6 @@ export class TaskViewPage implements OnInit {
   }
 
   update(goBack?) {
-    console.log(this.task,"this.task");
     if (this.task.name) {
       if (!this.task.isEdit) {
         this.task.isEdit = this.copyOfTaskDetails === JSON.stringify(this.task) ? false : true;
