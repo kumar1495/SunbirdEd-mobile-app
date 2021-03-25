@@ -31,7 +31,11 @@
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type">
+              <ion-select [(ngModel)]="filter.type" 
+              [interfaceOptions]="{
+                cssClass: 'select-box',
+                animated: false
+              }">
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
@@ -72,8 +76,7 @@
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type" (ionChange)="reportTypeChange()" 
-              [interfaceOptions]="{
+              <ion-select [(ngModel)]="filter.type" (ionChange)="reportTypeChange()" [interfaceOptions]="{
                 cssClass: 'select-box',
                 animated: false
               }">
@@ -112,7 +115,10 @@
 
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type">
+              <ion-select [(ngModel)]="filter.type" [interfaceOptions]="{
+                cssClass: 'select-box',
+                animated: false
+              }">
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
