@@ -115,7 +115,8 @@
 
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type" [interfaceOptions]="{
+              <ion-select [(ngModel)]="filter.type" 
+              [interfaceOptions]="{
                 cssClass: 'select-box',
                 animated: false
               }">

@@ -101,7 +101,11 @@ export class CreateProjectPage implements OnInit {
 
   private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.location.back();
+      if (this.alert) { this.alert.dismiss(); }
+      if (this.createProjectAlert) {
+        this.createProjectAlert.dismiss()
+      }
+      this.confirmToClose();
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -377,5 +381,13 @@ export class CreateProjectPage implements OnInit {
       ]
     });
     await this.createProjectAlert.present();
+  }
+  ionViewWillLeave() {
+    if (this.createProjectAlert) {
+      this.createProjectAlert.dismiss()
+    }
+    if (this.alert) {
+      this.alert.dismiss();
+    }
   }
 }
