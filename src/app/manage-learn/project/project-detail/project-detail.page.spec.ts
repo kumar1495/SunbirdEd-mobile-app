@@ -27,28 +27,94 @@ import { SharingFeatureService } from '../../core/services/sharing-feature.servi
 import { ProjectDetailPage } from './project-detail.page';
 
 describe('ProjectDetailPage', () => {
+    let projectDetailPage: ProjectDetailPage;
+    const mockParams: Partial<ActivatedRoute> = {}
+    const mockPopoverController: Partial<PopoverController> = {}
+    const mockHeaderService: Partial<AppHeaderService> = {}
+    const mockDbService: Partial<DbService> = {}
+    const mockLoader: Partial<LoaderService> = {}
+    const mockRouter: Partial<Router> = {}
+    const mockUtils: Partial<UtilsService> = {}
+    const mockAlert: Partial<AlertController> = {}
+    const mockShareService: Partial<SharingFeatureService> = {}
+    const mockSyncServ: Partial<SyncService> = {}
+    const mockToast: Partial<ToastService> = {}
+    const mockTranslate: Partial<TranslateService> = {}
+    const mockNetworkService: Partial<NetworkService> = {}
+    const mockModal: Partial<ModalController> = {}
+    const mockUnnatiService: Partial<UnnatiDataService> = {}
+    const mockPlatform: Partial<Platform> = {}
+    const mockRef: Partial<ChangeDetectorRef> = {}
+    const mockNavigateService: Partial<NavigationService> = {}
+    const mockAlertController: Partial<AlertController> = {}
+    const mockContentService: Partial<ContentService> = {}
 
     beforeAll(() => {
-    public params: ActivatedRoute,
-        public popoverController: PopoverController,
-        private headerService: AppHeaderService,
-        private db: DbService,
-        private loader: LoaderService,
-        private router: Router,
-        private utils: UtilsService,
-        private alert: AlertController,
-        private share: SharingFeatureService,
-        private syncServ: SyncService,
-        private toast: ToastService,
-        private translate: TranslateService,
-        private networkService: NetworkService,
-        private modal: ModalController,
-        private unnatiService: UnnatiDataService,
-        private platform: Platform,
-        private ref: ChangeDetectorRef,
-        private navigateService: NavigationService,
-        private alertController: AlertController,
-        contentService: ContentService
-})
+        projectDetailPage = new ProjectDetailPage{
+            mockParams as ActivatedRoute,
+                mockPopoverController as PopoverController,
+                mockHeaderService as AppHeaderService,
+                mockDbService as DbService,
+                mockLoader as LoaderService,
+                mockRouter as Router,
+                mockUtils as UtilsService,
+                mockAlert as AlertController,
+                mockShareService as SharingFeatureService,
+                mockSyncServ as SyncService,
+                mockToast as ToastService,
+                mockTranslate as TranslateService,
+                mockNetworkService as NetworkService,
+                mockModal as ModalController,
+                mockUnnatiService as UnnatiDataService,
+                mockPlatform as Platform,
+                mockRef as ChangeDetectorRef,
+                mockNavigateService as NavigationService,
+                mockAlertController as AlertController,
+                mockContentService as ContentService
+        }
 
+    })
+    beforeEach(() => {
+        jest.clearAllMocks();
+        jest.resetAllMocks();
+    });
+
+    it('Should be intiate Project listing compnent', () => {
+        expect(ProjectDetailPage).toBeTruthy();
+    })
+    describe('ionViewWillEnter', () => {
+        it('Should invoke initApp and getDateFilters', (done) => {
+            // arrange 
+
+            // act
+            projectDetailPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(projectDetailPage.initApp).toHaveBeenCalled();
+                expect(projectDetailPage.getDateFilters).toHaveBeenCalled();
+                done();
+            }, 0);
+        })
+    })
+    describe('initApp', () => {
+        it('Should set header configuration', (done) => {
+            mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
+                showHeader: true,
+                showBurgerMenu: true,
+                pageTitle: 'string',
+                actionButtons: ['true'],
+            }));
+            mockHeaderService.updatePageConfig = jest.fn();
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, cb) => {
+                    setTimeout(() => {
+                        cb();
+                    }, 0);
+                    return {
+                        unsubscribe: jest.fn()
+                    };
+                }),
+            } as any;
+        })
+    })
 })
