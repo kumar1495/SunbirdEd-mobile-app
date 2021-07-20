@@ -433,10 +433,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   subscribeTrackDownloads() {
-    if(window['device'].platform.toLowerCase() !== "ios") {
       this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
         share());
-    }
   }
 
   checkCurrentUserType() {
