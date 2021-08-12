@@ -689,7 +689,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async makeEntryInSupportFolder() {
     return new Promise((resolve => {
-      (window as any).sbutility.makeEntryInSunbirdSupportFile((result) => {
+      const pluginName = this.platform.is("ios") ? 'supportfile' : 'sbutility';
+      (window as any)[pluginName].makeEntryInSunbirdSupportFile((result) => {
         this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
         resolve();
       }, () => {

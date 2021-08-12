@@ -181,7 +181,8 @@ export class FaqHelpPage implements OnInit {
   }
 
   async ionViewDidLeave() {
-    (<any>window).sbutility.removeFile(
+    const pluginName = this.platform.is("ios") ? 'supportfile' : 'sbutility';
+    (<any>window)[pluginName].removeFile(
       result => ({}),
       error => {
         console.error('error' + error);

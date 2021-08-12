@@ -87,7 +87,8 @@ export class AboutUsComponent implements OnInit {
   }
 
   ionViewDidLeave() {
-    (<any>window).sbutility.removeFile(() => {
+    const pluginName = this.platform.is("ios") ? 'supportfile' : 'sbutility';
+    (<any>window)[pluginName].removeFile(() => {
     }, (error) => {
       console.error('error', error);
     });
@@ -110,7 +111,7 @@ export class AboutUsComponent implements OnInit {
       map((contentCount) => contentCount.length)
     ).toPromise();
     let loader = await this.commonUtilService.getLoader();
-    (<any>window).sbutility.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
+    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       await loader.present();
       this.preferences.putString(KEY_SUNBIRD_CONFIG_FILE_PATH, result).toPromise()
         .then((res) => {

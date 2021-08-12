@@ -39,7 +39,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
 import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
 
@@ -122,7 +122,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     public zone: NgZone,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private frameworkCommonFormConfigBuilder: FrameworkCommonFormConfigBuilder,
-    private aliasBoardName: AliasBoardName
+    private aliasBoardName: AliasBoardName,
+    private platform: Platform
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.data = this.router.getCurrentNavigation().extras.state.data;
@@ -245,7 +246,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       map((contentCount) => contentCount.length)
     )
       .toPromise();
-    (<any>window).sbutility.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
+      const pluginName = this.platform.is("ios") ? 'supportfile' : 'sbutility';
+    (<any>window)[pluginName].shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       this.preferences.putString(KEY_SUNBIRD_CONFIG_FILE_PATH, result).toPromise()
