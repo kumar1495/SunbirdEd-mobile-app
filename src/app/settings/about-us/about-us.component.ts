@@ -111,7 +111,8 @@ export class AboutUsComponent implements OnInit {
       map((contentCount) => contentCount.length)
     ).toPromise();
     let loader = await this.commonUtilService.getLoader();
-    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
+    const pluginName = this.platform.is("ios") ? 'supportfile' : 'sbutility';
+    (<any>window)[pluginName].shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       await loader.present();
       this.preferences.putString(KEY_SUNBIRD_CONFIG_FILE_PATH, result).toPromise()
         .then((res) => {
